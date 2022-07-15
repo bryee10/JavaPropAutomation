@@ -76,13 +76,12 @@ DesignParameters = [NumBlades, BladeSections, PropDiameter, SpinDiameter, Shroud
 
 figure
 set(gca,'Color','w')
-
 for i = PitchAngle(1):1:PitchAngle(length(PitchAngle))
   BladeAngAttackPitch = BladeAngAttack + i;
   DesignPropCustom(BladeProfile,BladeAngAttackPitch,DesignParameters);
   v_AS = []; T_AS = []; R_AS = [];
-  for i = linspace(RPM/1.5,RPM*1.2,50)
-    a = MultiAnalysis(PropDesignCustom,i);
+  for j = linspace(RPM/1.5,RPM*1.2,50)
+    a = MultiAnalysis(PropDesignCustom,j);
     v = []; T = []; R = [];
     v = [v a.V];
     R = [R a.RPM];
@@ -90,19 +89,26 @@ for i = PitchAngle(1):1:PitchAngle(length(PitchAngle))
 ##  v_AS = ones(1,length(v));
 ##  R_AS = ones(1,length(R));
 ##  T_AS = ones(1,length(T));
-    for i = 1:length(v)
-      if abs(AirSpeed - v(i)) < 1
-        v_AS = [v_AS v(i)];
-        R_AS = [R_AS R(i)];
-        T_AS = [T_AS T(i)];
+    for k = 1:length(v)
+      if abs(AirSpeed - v(k)) < 0.8
+        v_AS = [v_AS v(k)];
+        R_AS = [R_AS R(k)];
+        T_AS = [T_AS T(k)];
         break
       end
   end
   end
   plot(R_AS,T_AS,'markersize',8);
   hold on
+  RPMstring = num2str(i);
+  RPMstring = [RPMstring ' deg Pitch Angle']
+  text(R_AS(length(R_AS))+25,T_AS(length(T_AS)),RPMstring,'fontsize',15)
 end
 
-xlabel('RPM');
-ylabel('Thrust');
+xlabel('RPM','fontsize',25);
+ylabel('Thrust [N]','fontsize',25);
+% For MATLAB only because Octave sucks
+##xline(RPM,'--k');
+plot(linspace(RPM,RPM,50),linspace(0,500,50),'--k')
+text(RPM+40,400,'Most efficient RPM');
 zlabel('Airspeed Velocity');
