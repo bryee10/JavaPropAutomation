@@ -1,6 +1,7 @@
 %{
 Brian Yee
-LiquidPiston
+LiquidPiston Inc
+7/15/2022
 
 This is a test to call the DesignProp function. It will prompt the user to input all required parameters to design the propeller.
 %}
