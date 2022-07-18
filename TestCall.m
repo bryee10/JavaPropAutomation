@@ -22,7 +22,7 @@ RPM = 5250;
 Power = 18000;
 Thrust = 0;
 Torque = 0;
-PitchAngle = [0 9];
+PitchAngle = [-9 9];
 
 YN = input("Would you like to enter the design parameters now? [Y/N] ",'s');
 
@@ -90,8 +90,7 @@ figure(2);
 figure(3);
 set(gca,'Color','w')
 for i = PitchAngle(1):1:PitchAngle(length(PitchAngle))
-  BladeAngAttackPitch = BladeAngAttack + i;
-  DesignPropCustom(BladeProfile,BladeAngAttackPitch,DesignParameters,YN_2);
+  DesignPropCustom(BladeProfile,BladeAngAttack,DesignParameters,YN_2,i);
   v_AS = []; T_AS = []; R_AS = []; eta_AS = []; P_AS = [];
   for j = linspace(RPM/1.5,RPM*1.1,50)
     a = MultiAnalysis(PropDesignCustom,j);
@@ -132,7 +131,7 @@ for i = PitchAngle(1):1:PitchAngle(length(PitchAngle))
   hold on
   text(R_AS(length(R_AS))+25,P_AS(length(P_AS)),pitchString,'fontsize',15);
 
-  fprintf('\n%2.2f%% done \n \n',100*(i-PitchAngle(1))/(PitchAngle(length(PitchAngle))-PitchAngle(1)));
+  fprintf('\n%2.2f%% done \n',100*(i-PitchAngle(1))/(PitchAngle(length(PitchAngle))-PitchAngle(1)));
 end
 
 figure(1);
@@ -140,6 +139,7 @@ xlabel('RPM','fontsize',25);
 ylabel('Thrust [N]','fontsize',25);
 % For MATLAB only because Octave sucks
 ##xline(RPM,'--k');
+temp =
 plot(linspace(RPM,RPM,5),linspace(0,500,5),'--k')
 text(RPM+40,0.95*max(T_AS),'Most efficient RPM');
 zlabel('Airspeed Velocity');
