@@ -29,7 +29,7 @@
 %-------------------------------------------------------------------------------
 
 %% DesignProp
-function [PropDesignCustom] = DesignPropCustom(BladeProfiles,BladeAngAttack,DesignParameters,YN_2)
+function [PropDesignCustom] = DesignPropCustom(BladeProfiles,BladeAngAttack,DesignParameters,YN_2,PitchAngle)
 
    % add the archive to the Java classpath (must be done only once per session, but can be called multiple times)
    basepath = ['..',filesep(),'..',filesep(),'java'];
@@ -160,7 +160,7 @@ function [PropDesignCustom] = DesignPropCustom(BladeProfiles,BladeAngAttack,Desi
 ##   end
 
    % Additional options ( here they do nothing)
-   PropDesignCustom.incrementBladeAngle(0);         % Increases the local blade angle Beta but constant dBeta
+   PropDesignCustom.incrementBladeAngle(30);         % Increases the local blade angle Beta but constant dBeta
    PropDesignCustom.multiplyBladeAngle(1);          % Multiplies local blade angle Beta by a constant
    PropDesignCustom.incrementChord(0);              % Increments local chord c/R by constant c/R
    PropDesignCustom.multiplyChord(1);               % Multiplies local chord c/R by constant c/R factor
@@ -168,6 +168,7 @@ function [PropDesignCustom] = DesignPropCustom(BladeProfiles,BladeAngAttack,Desi
 
    % Finally: create the propeller
    PropDesignCustom.performPropellerDesign(Airspeed, Omega, Radius, Power, Thrust);
+   PropDesignCustom.incrementBladeAngle(PitchAngle);
 
    % Perform an analysis to get some of the parameters we need
 
