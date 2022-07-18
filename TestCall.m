@@ -34,6 +34,16 @@ while YN ~= 'Y' || YN ~= 'N'
   end
 end
 
+YN_2 = input("Would you like to hide propeller details during simulations? [Y/N] ",'s');
+
+while YN_2 ~= 'Y' || YN_2 ~= 'N'
+  if YN_2 == 'N' || YN_2 == 'Y'
+    break
+  else
+  YN_2 = input("Would you like to hide propeller details during simulations? [Y/N] ",'s');
+  end
+end
+
 if YN == 'Y'
   NumBlades = input("How many blades are in the propeller? ");
 
@@ -75,18 +85,22 @@ DesignParameters = [NumBlades, BladeSections, PropDiameter, SpinDiameter, Shroud
 
 ##DesignPropCustom(BladeProfile,BladeAngAttack,DesignParameters)
 
-figure
+figure(1);
+figure(2);
+figure(3);
 set(gca,'Color','w')
 for i = PitchAngle(1):1:PitchAngle(length(PitchAngle))
   BladeAngAttackPitch = BladeAngAttack + i;
-  DesignPropCustom(BladeProfile,BladeAngAttackPitch,DesignParameters);
-  v_AS = []; T_AS = []; R_AS = [];
-  for j = linspace(RPM/1.5,RPM*1.2,50)
+  DesignPropCustom(BladeProfile,BladeAngAttackPitch,DesignParameters,YN_2);
+  v_AS = []; T_AS = []; R_AS = []; eta_AS = []; P_AS = [];
+  for j = linspace(RPM/1.5,RPM*1.1,50)
     a = MultiAnalysis(PropDesignCustom,j);
-    v = []; T = []; R = [];
+    v = []; T = []; R = []; eta = []; P =[];
     v = [v a.V];
     R = [R a.RPM];
     T = [T a.Thrust];
+    eta = [eta a.Eta];
+    P = [P a.Power];
 ##  v_AS = ones(1,length(v));
 ##  R_AS = ones(1,length(R));
 ##  T_AS = ones(1,length(T));
@@ -95,21 +109,55 @@ for i = PitchAngle(1):1:PitchAngle(length(PitchAngle))
         v_AS = [v_AS v(k)];
         R_AS = [R_AS R(k)];
         T_AS = [T_AS T(k)];
+        eta_AS = [eta_AS eta(k)];
+        P_AS = [P_AS P(k)];
         break
       end
+    end
   end
-  end
+  figure(1)
   plot(R_AS,T_AS,'markersize',8);
   hold on
-  RPMstring = num2str(i);
-  RPMstring = [RPMstring ' deg Pitch Angle']
-  text(R_AS(length(R_AS))+25,T_AS(length(T_AS)),RPMstring,'fontsize',15)
+  pitchString = num2str(i);
+  pitchString = [pitchString ' deg Pitch Angle'];
+  text(R_AS(length(R_AS))+25,T_AS(length(T_AS)),pitchString,'fontsize',15);
+
+  figure(2)
+  plot(R_AS,eta_AS,'markersize',8);
+  hold on
+  text(R_AS(length(R_AS))+25,eta_AS(length(eta_AS)),pitchString,'fontsize',15);
+
+  figure(3)
+  plot(R_AS,P_AS,'markersize',8);
+  hold on
+  text(R_AS(length(R_AS))+25,P_AS(length(P_AS)),pitchString,'fontsize',15);
+
+  fprintf('\n%2.2f%% done \n \n',100*(i-PitchAngle(1))/(PitchAngle(length(PitchAngle))-PitchAngle(1)));
 end
 
+figure(1);
 xlabel('RPM','fontsize',25);
 ylabel('Thrust [N]','fontsize',25);
 % For MATLAB only because Octave sucks
 ##xline(RPM,'--k');
-plot(linspace(RPM,RPM,50),linspace(0,500,50),'--k')
-text(RPM+40,400,'Most efficient RPM');
+plot(linspace(RPM,RPM,5),linspace(0,500,5),'--k')
+text(RPM+40,0.95*max(T_AS),'Most efficient RPM');
+zlabel('Airspeed Velocity');
+
+figure(2);
+xlabel('RPM','fontsize',25);
+ylabel('Efficiency [%]','fontsize',25);
+% For MATLAB only because Octave sucks
+##xline(RPM,'--k');
+plot(linspace(RPM,RPM,5),linspace(0,100,5),'--k')
+text(RPM+40,0.95*max(eta_AS),'Most efficient RPM');
+zlabel('Airspeed Velocity');
+
+figure(3);
+xlabel('RPM','fontsize',25);
+ylabel('Power [W]','fontsize',25);
+% For MATLAB only because Octave sucks
+##xline(RPM,'--k');
+plot(linspace(RPM,RPM,5),linspace(0,35000,5),'--k')
+text(RPM+40,0.95*max(P_AS),'Most efficient RPM');
 zlabel('Airspeed Velocity');
