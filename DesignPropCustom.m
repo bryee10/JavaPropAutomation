@@ -1,32 +1,9 @@
-%-------------------------------------------------------------------------------
-%
-% A function to encapsulate the JavaProp propeller design code
-%
-%-------------------------------------------------------------------------------
-% Can be used with MatLab as well as with GNU Octave.
-%
-% NOTE: For Octave the package java-1.2.8 is required.
-%
 % Martin Hepperle
 % September 2011
 %-------------------------------------------------------------------------------
 %
 % JavaProp is Copyright 2001-2011 Martin Hepperle
 % http://www.mh-aerotools.de/airfoils/javaprop.htm
-%
-% History:
-% --- 16/10/2007 ---
-% The core function was written for Matlab by Ed Waugh, University of Southampton
-% For Matlab version 7.4.0 (R2007a)
-% --- 26/09/2009 ---
-% This code was generalized so that it can also be run in Octave by Martin Hepperle.
-%
-% No support is offered with this code and it comes without any guarantee.
-%
-%-------------------------------------------------------------------------------
-% Adapt the fields in this function and then execute to create a
-% PropDesignCustom object that can then be used by the AnalyseProp function
-%-------------------------------------------------------------------------------
 
 %% DesignProp
 function [PropDesignCustom] = DesignPropCustom(BladeProfiles,BladeAngAttack,DesignParameters,YN_2,PitchAngle)
@@ -168,6 +145,7 @@ function [PropDesignCustom] = DesignPropCustom(BladeProfiles,BladeAngAttack,Desi
 
    % Finally: create the propeller
    PropDesignCustom.performPropellerDesign(Airspeed, Omega, Radius, Power, Thrust);
+   % Adjust blade angle
    PropDesignCustom.incrementBladeAngle(PitchAngle);
 
    % Perform an analysis to get some of the parameters we need
